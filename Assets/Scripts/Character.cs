@@ -12,10 +12,23 @@ public class Character : MonoBehaviour {
 
 		public const float MAX_LINEAR_VELOCITY = 10.0f;
 		public const float MAX_LINEAR_VELOCITY_INVERSE = 1.0f / MAX_LINEAR_VELOCITY;
+
+		public const int IDLE_STATUS_CODE = 0;
+		public const int WALK_STATUS_CODE = 1;
+		public const int JUMP_STATUS_CODE = 2;
+		public const int FALL_STATUS_CODE = 3;
+
+		public const float NOT_WALKING_THRESHOLD = 0.01f;
 	}
+
+	private static int ONTHEFLOOR_BOOL_HASH = Animator.StringToHash ("OnTheFloor");
+	private static int WALKING_BOOL_HASH = Animator.StringToHash ("Walking");
+	private static int JUMPING_BOOL_HASH = Animator.StringToHash ("Jumping");
 
 	private GameObject planet;
 	private Rigidbody2D rigidBody;
+	private Animator anim;
+	private GameObject sprite;
 
 	private HashSet<GameObject> onTheGround;
 	private Coroutine jumpForceCoroutine;
@@ -33,6 +46,8 @@ public class Character : MonoBehaviour {
 				}
 
 				onTheGround.Add (coll.gameObject);
+
+				anim.SetBool (ONTHEFLOOR_BOOL_HASH, true);
 			}
 		}
 
@@ -42,6 +57,9 @@ public class Character : MonoBehaviour {
 		if (coll.gameObject.tag == "Ground") {
 			if (onTheGround.Contains (coll.gameObject)) {
 				onTheGround.Remove (coll.gameObject);
+
+				if(onTheGround.Count == 0)
+					anim.SetBool (ONTHEFLOOR_BOOL_HASH, false);
 			}
 		}
 	}
@@ -50,6 +68,7 @@ public class Character : MonoBehaviour {
 		float _jumpCommand;
 		float _elapsedTime = 0.0f;
 
+		anim.SetBool (JUMPING_BOOL_HASH, true);
 		do {
 			_elapsedTime += Time.deltaTime;
 			_jumpCommand = Input.GetAxis ("Jump");
@@ -66,15 +85,17 @@ public class Character : MonoBehaviour {
 			yield return null;
 		} while (_jumpCommand > 0.0f);
 
+		anim.SetBool (JUMPING_BOOL_HASH, false);
 		jumpForceCoroutine = null;
 	}
 
 	private Vector2 getWalkForce(Vector2 _walkDirection) {
-		float _currentVelocityMagnitude = _walkDirection.magnitude;
-		Vector2 _currentWalkVector = _walkDirection
-			* (Vector2.Dot (rigidBody.velocity, _walkDirection) / (_currentVelocityMagnitude * _currentVelocityMagnitude));
-		
+		float _walkDirectionVectorMagnitude = _walkDirection.magnitude;
+
 		// Project the current velocity onto the walk direction vector
+		Vector2 _currentWalkVector = _walkDirection
+			* (Vector2.Dot (rigidBody.velocity, _walkDirection) / (_walkDirectionVectorMagnitude * _walkDirectionVectorMagnitude));
+		
 		float _currentWalkMagnitude = _currentWalkVector.magnitude;
 		float _walkForceFactor = (Constants.MAX_LINEAR_VELOCITY - _currentWalkMagnitude) * Constants.MAX_LINEAR_VELOCITY_INVERSE;
 		_walkForceFactor = Mathf.Min (_walkForceFactor, Constants.WALK_FORCE);
@@ -87,6 +108,8 @@ public class Character : MonoBehaviour {
 	void Awake () {
 		planet = GameObject.Find ("Planet");
 		rigidBody = GetComponent<Rigidbody2D> ();
+		anim = GetComponent<Animator> ();
+		sprite = transform.Find ("CharacterV").gameObject;
 
 		onTheGround = new HashSet<GameObject> ();
 		jumpForceCoroutine = null;
@@ -102,12 +125,35 @@ public class Character : MonoBehaviour {
 		Vector2 _gravity = new Vector2 (_direction.x, _direction.y).normalized * Common.Constants.GRAVITY_MAGNITUDE;
 
 		rigidBody.AddForce (rigidBody.mass * _gravity);
-		transform.rotation = Quaternion.LookRotation(Vector3.back, _direction);
+		transform.rotation = Quaternion.LookRotation(Vector3.forward, _direction);
 
 		Vector3 _walkVector = Vector3.Cross (Vector3.back, _direction).normalized;
 		Vector2 _walkDirection = new Vector2 (_walkVector.x, _walkVector.y);
 
-		rigidBody.AddForce (getWalkForce (_walkDirection));
+		Vector2 _walkForce = getWalkForce (_walkDirection);
+		rigidBody.AddForce (_walkForce);
+
+		// Invert the character if needed
+		float _horizontalAxis = Input.GetAxis ("Horizontal");
+		if (_horizontalAxis < 0.0f) {
+			if (sprite.transform.localScale.x > 0.0f) {
+				sprite.transform.localScale = new Vector3 (
+					-sprite.transform.localScale.x,
+					sprite.transform.localScale.y,
+					sprite.transform.localScale.z
+				);
+			}
+		} else if (_horizontalAxis > 0.0f) {
+			if (sprite.transform.localScale.x < 0.0f) {
+				sprite.transform.localScale = new Vector3 (
+					-sprite.transform.localScale.x,
+					sprite.transform.localScale.y,
+					sprite.transform.localScale.z
+				);
+			}
+		}
+
+		anim.SetBool (WALKING_BOOL_HASH, _walkForce.magnitude >= Constants.NOT_WALKING_THRESHOLD);
 
 		float _jumpCommand = Input.GetAxis ("Jump");
 		if (_jumpCommand > 0.0f) {
