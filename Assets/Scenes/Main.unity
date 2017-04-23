@@ -375,7 +375,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!68 &922268513
 EdgeCollider2D:
   m_ObjectHideFlags: 0
@@ -558,6 +558,52 @@ SpriteRenderer:
   m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
+--- !u!1001 &1180783599
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4678611914678012, guid: d87de41e496754d9d90f62ffbdb27557, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0.44409102
+      objectReference: {fileID: 0}
+    - target: {fileID: 4678611914678012, guid: d87de41e496754d9d90f62ffbdb27557, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 37.54
+      objectReference: {fileID: 0}
+    - target: {fileID: 4678611914678012, guid: d87de41e496754d9d90f62ffbdb27557, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4678611914678012, guid: d87de41e496754d9d90f62ffbdb27557, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4678611914678012, guid: d87de41e496754d9d90f62ffbdb27557, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4678611914678012, guid: d87de41e496754d9d90f62ffbdb27557, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4678611914678012, guid: d87de41e496754d9d90f62ffbdb27557, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4678611914678012, guid: d87de41e496754d9d90f62ffbdb27557, type: 2}
+      propertyPath: m_RootOrder
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1402771888501256, guid: d87de41e496754d9d90f62ffbdb27557, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: d87de41e496754d9d90f62ffbdb27557, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1001 &1226098927
 Prefab:
   m_ObjectHideFlags: 0
@@ -898,8 +944,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 503492923
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 1e164bbcce616447397d4fa88b67e18a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
