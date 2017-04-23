@@ -6,7 +6,7 @@ public class Character : MonoBehaviour {
 
 	private static class Constants {
 		public const float WALK_FORCE = 20.0f;
-		public const float JUMP_FORCE = 1.0f;
+		public const float JUMP_FORCE = 0.75f;
 		public const float JUMP_FORCE_DEGRADATION_TIME = 0.5f;
 		public const float JUMP_FORCE_DEGRADATION_TIME_INVERSE = 1.0f / JUMP_FORCE_DEGRADATION_TIME;
 
@@ -19,6 +19,7 @@ public class Character : MonoBehaviour {
 		public const int FALL_STATUS_CODE = 3;
 
 		public const float NOT_WALKING_THRESHOLD = 0.01f;
+		public const float LEAVING_FLOOR_WAIT_TIME = 0.05f;
 	}
 
 	private static int ONTHEFLOOR_BOOL_HASH = Animator.StringToHash ("OnTheFloor");
@@ -32,6 +33,7 @@ public class Character : MonoBehaviour {
 
 	private HashSet<GameObject> onTheGround;
 	private Coroutine jumpForceCoroutine;
+	private Coroutine notOnTheFloorCoroutine;
 	private bool tryingToJump;
 
 	private float life;
@@ -47,6 +49,11 @@ public class Character : MonoBehaviour {
 
 				onTheGround.Add (coll.gameObject);
 
+				if (notOnTheFloorCoroutine != null) {
+					StopCoroutine (notOnTheFloorCoroutine);
+					notOnTheFloorCoroutine = null;
+				}
+
 				anim.SetBool (ONTHEFLOOR_BOOL_HASH, true);
 			}
 		}
@@ -58,10 +65,22 @@ public class Character : MonoBehaviour {
 			if (onTheGround.Contains (coll.gameObject)) {
 				onTheGround.Remove (coll.gameObject);
 
-				if(onTheGround.Count == 0)
-					anim.SetBool (ONTHEFLOOR_BOOL_HASH, false);
+				if (onTheGround.Count == 0) {
+					if (notOnTheFloorCoroutine == null)
+						notOnTheFloorCoroutine = StartCoroutine (leavingFloorWait ());
+				}
 			}
 		}
+	}
+
+	private IEnumerator leavingFloorWait (){
+		float _elapsedTime = 0.0f;
+
+		yield return new WaitForSeconds (Constants.LEAVING_FLOOR_WAIT_TIME);
+
+		anim.SetBool (ONTHEFLOOR_BOOL_HASH, false);
+
+		notOnTheFloorCoroutine = null;
 	}
 
 	private IEnumerator jumpForce (){
@@ -113,6 +132,7 @@ public class Character : MonoBehaviour {
 
 		onTheGround = new HashSet<GameObject> ();
 		jumpForceCoroutine = null;
+		notOnTheFloorCoroutine = null;
 		tryingToJump = false;
 
 		life = 100.0f;
