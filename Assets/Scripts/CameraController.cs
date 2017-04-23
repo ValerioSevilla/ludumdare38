@@ -14,7 +14,7 @@ public class CameraController : MonoBehaviour {
 
 	void Update () {
 		Quaternion _targetRotation = target.transform.rotation;
-		Quaternion _rotation = Quaternion.AngleAxis (_targetRotation.eulerAngles.z, Vector3.back);
+		Quaternion _rotation = Quaternion.AngleAxis (_targetRotation.eulerAngles.z, Vector3.forward);
 		transform.rotation = _rotation;
 
 		transform.position = target.transform.position + (_rotation * cameraOffset);
