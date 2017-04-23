@@ -466,6 +466,52 @@ SpriteRenderer:
   m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
+--- !u!1001 &1331607238
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4844015608581696, guid: 5ad9134235bb643cc9d97e640375008a, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0.4090184
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844015608581696, guid: 5ad9134235bb643cc9d97e640375008a, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 37.55
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844015608581696, guid: 5ad9134235bb643cc9d97e640375008a, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0.8043745
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844015608581696, guid: 5ad9134235bb643cc9d97e640375008a, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844015608581696, guid: 5ad9134235bb643cc9d97e640375008a, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844015608581696, guid: 5ad9134235bb643cc9d97e640375008a, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844015608581696, guid: 5ad9134235bb643cc9d97e640375008a, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844015608581696, guid: 5ad9134235bb643cc9d97e640375008a, type: 2}
+      propertyPath: m_RootOrder
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1149966115416968, guid: 5ad9134235bb643cc9d97e640375008a, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 5ad9134235bb643cc9d97e640375008a, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1001 &1610488892
 Prefab:
   m_ObjectHideFlags: 0
@@ -558,6 +604,10 @@ Prefab:
     - target: {fileID: 4201821095938332, guid: 8142017dd6045493992801984d6ea168, type: 2}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -5.946
+      objectReference: {fileID: 0}
+    - target: {fileID: 1339505725536532, guid: 8142017dd6045493992801984d6ea168, type: 2}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8142017dd6045493992801984d6ea168, type: 2}
@@ -681,7 +731,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1807415926
 MonoBehaviour:
   m_ObjectHideFlags: 0
