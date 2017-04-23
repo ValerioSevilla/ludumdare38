@@ -25,6 +25,7 @@ public class Character : MonoBehaviour {
 	private static int ONTHEFLOOR_BOOL_HASH = Animator.StringToHash ("OnTheFloor");
 	private static int WALKING_BOOL_HASH = Animator.StringToHash ("Walking");
 	private static int JUMPING_BOOL_HASH = Animator.StringToHash ("Jumping");
+	private static int DIE_TRIGGER_HASH = Animator.StringToHash ("Die");
 
 	private GameObject planet;
 	private Rigidbody2D rigidBody;
@@ -56,6 +57,8 @@ public class Character : MonoBehaviour {
 
 				anim.SetBool (ONTHEFLOOR_BOOL_HASH, true);
 			}
+		} else if (coll.gameObject.tag == "Deadly") {
+			die ();
 		}
 
 	}
@@ -71,6 +74,15 @@ public class Character : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	private void die () {
+		life = 0.0f;
+		anim.SetTrigger (DIE_TRIGGER_HASH);
+	}
+
+	public void commitDeath () {
+		GameObject.Find ("Canvas/Fade").GetComponent<FadeScript> ().fadeOut ("Main");
 	}
 
 	private IEnumerator leavingFloorWait (){
@@ -141,6 +153,9 @@ public class Character : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (life == 0.0f)
+			return;
+		
 		Vector3 _direction = transform.position - planet.transform.position;
 		Vector2 _gravity = new Vector2 (_direction.x, _direction.y).normalized * Common.Constants.GRAVITY_MAGNITUDE;
 
