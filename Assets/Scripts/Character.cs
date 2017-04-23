@@ -21,8 +21,11 @@ public class Character : MonoBehaviour {
 		public const float NOT_WALKING_THRESHOLD = 0.01f;
 		public const float LEAVING_FLOOR_WAIT_TIME = 0.05f;
 
-		public const float O2_PER_SECOND = 2.0f;
+		public const float O2_PER_SECOND = 1.5f;
 		public const float LIFE_WITH_NO_O2_PER_SECOND = 7.0f;
+
+		public const float FALL_DAMAGE_THRESHOLD = 15.0f;
+		public const float FALL_DAMAGE = 25.0f;
 	}
 
 	private static int ONTHEFLOOR_BOOL_HASH = Animator.StringToHash ("OnTheFloor");
@@ -56,7 +59,11 @@ public class Character : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D coll) {
-		if (coll.gameObject.tag == "Ground") {
+		if (coll.relativeVelocity.magnitude >= Constants.FALL_DAMAGE_THRESHOLD) {
+			damage (Constants.FALL_DAMAGE);
+		}
+
+		if (coll.gameObject.tag == "Ground" || coll.gameObject.tag == "Rock") {
 			{//if (coll.relativeVelocity.y > 0.0f && coll.relativeVelocity.y > Mathf.Abs(coll.relativeVelocity.x)) {
 				if (jumpForceCoroutine != null) {
 					StopCoroutine (jumpForceCoroutine);
@@ -81,7 +88,7 @@ public class Character : MonoBehaviour {
 	}
 
 	void OnCollisionExit2D(Collision2D coll) {
-		if (coll.gameObject.tag == "Ground") {
+		if (coll.gameObject.tag == "Ground" || coll.gameObject.tag == "Rock") {
 			if (onTheGround.Contains (coll.gameObject)) {
 				onTheGround.Remove (coll.gameObject);
 
@@ -103,6 +110,14 @@ public class Character : MonoBehaviour {
 
 	public void commitDeath () {
 		GameObject.Find ("Canvas/Fade").GetComponent<FadeScript> ().fadeOut ("Main");
+	}
+
+	private void damage (float _damage) {
+		Life -= _damage;
+		if (Life <= 0.0f) {
+			Life = 0.0f;
+			die ();
+		}
 	}
 
 	private IEnumerator leavingFloorWait (){
@@ -228,11 +243,7 @@ public class Character : MonoBehaviour {
 		Oxygen -= (Time.deltaTime * Constants.O2_PER_SECOND);
 		if (Oxygen <= 0.0f) {
 			Oxygen = 0.0f;
-			Life -= (Time.deltaTime * Constants.LIFE_WITH_NO_O2_PER_SECOND);
-			if (Life <= 0.0f) {
-				Life = 0.0f;
-				die ();
-			}
+			damage(Time.deltaTime * Constants.LIFE_WITH_NO_O2_PER_SECOND);
 		}
 
 		oxygenGauge.setRemainingOxygen (Oxygen);
