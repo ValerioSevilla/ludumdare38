@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Character
   - Ground
+  - Hill
   layers:
   - Default
   - TransparentFX
