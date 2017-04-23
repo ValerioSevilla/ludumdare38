@@ -6,12 +6,12 @@ public class Character : MonoBehaviour {
 
 	private static class Constants {
 		public const float GRAVITY_MAGNITUDE = -9.8f;
-		public const float WALK_FORCE = 15.0f;
+		public const float WALK_FORCE = 20.0f;
 		public const float JUMP_FORCE = 1.0f;
 		public const float JUMP_FORCE_DEGRADATION_TIME = 0.5f;
 		public const float JUMP_FORCE_DEGRADATION_TIME_INVERSE = 1.0f / JUMP_FORCE_DEGRADATION_TIME;
 
-		public const float MAX_LINEAR_VELOCITY = 5.0f;
+		public const float MAX_LINEAR_VELOCITY = 10.0f;
 		public const float MAX_LINEAR_VELOCITY_INVERSE = 1.0f / MAX_LINEAR_VELOCITY;
 	}
 
@@ -21,6 +21,9 @@ public class Character : MonoBehaviour {
 	private HashSet<GameObject> onTheGround;
 	private Coroutine jumpForceCoroutine;
 	private bool tryingToJump;
+
+	private float life;
+	private float oxygen;
 
 	void OnCollisionEnter2D(Collision2D coll) {
 		if (coll.gameObject.tag == "Ground") {
@@ -42,15 +45,6 @@ public class Character : MonoBehaviour {
 				onTheGround.Remove (coll.gameObject);
 			}
 		}
-	}
-
-	void Awake () {
-		planet = GameObject.Find ("Planet");
-		rigidBody = GetComponent<Rigidbody2D> ();
-
-		onTheGround = new HashSet<GameObject> ();
-		jumpForceCoroutine = null;
-		tryingToJump = false;
 	}
 
 	private IEnumerator jumpForce (){
@@ -89,6 +83,18 @@ public class Character : MonoBehaviour {
 		float _walkForce = Constants.WALK_FORCE * _walkForceFactor;
 
 		return _walkDirection * rigidBody.mass * Input.GetAxis ("Horizontal") * _walkForce;
+	}
+
+	void Awake () {
+		planet = GameObject.Find ("Planet");
+		rigidBody = GetComponent<Rigidbody2D> ();
+
+		onTheGround = new HashSet<GameObject> ();
+		jumpForceCoroutine = null;
+		tryingToJump = false;
+
+		life = 100.0f;
+		oxygen = 100.0f;
 	}
 	
 	// Update is called once per frame
