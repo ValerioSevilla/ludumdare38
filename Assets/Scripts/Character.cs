@@ -20,6 +20,9 @@ public class Character : MonoBehaviour {
 
 		public const float NOT_WALKING_THRESHOLD = 0.01f;
 		public const float LEAVING_FLOOR_WAIT_TIME = 0.05f;
+
+		public const float O2_PER_SECOND = 2.0f;
+		public const float LIFE_WITH_NO_O2_PER_SECOND = 7.0f;
 	}
 
 	private static int ONTHEFLOOR_BOOL_HASH = Animator.StringToHash ("OnTheFloor");
@@ -28,6 +31,9 @@ public class Character : MonoBehaviour {
 	private static int DIE_TRIGGER_HASH = Animator.StringToHash ("Die");
 
 	private GameObject planet;
+	private OxygenGauge oxygenGauge;
+	private LifeGauge lifeGauge;
+
 	private Rigidbody2D rigidBody;
 	private Animator anim;
 	private GameObject sprite;
@@ -38,7 +44,16 @@ public class Character : MonoBehaviour {
 	private bool tryingToJump;
 
 	private float life;
+	public float Life {
+		get { return life; }
+		private set { life = value; }
+	}
+
 	private float oxygen;
+	public float Oxygen {
+		get { return oxygen; }
+		private set { oxygen = value; }
+	}
 
 	void OnCollisionEnter2D(Collision2D coll) {
 		if (coll.gameObject.tag == "Ground") {
@@ -46,6 +61,8 @@ public class Character : MonoBehaviour {
 				if (jumpForceCoroutine != null) {
 					StopCoroutine (jumpForceCoroutine);
 					jumpForceCoroutine = null;
+
+					anim.SetBool (JUMPING_BOOL_HASH, false);
 				}
 
 				onTheGround.Add (coll.gameObject);
@@ -77,7 +94,10 @@ public class Character : MonoBehaviour {
 	}
 
 	private void die () {
-		life = 0.0f;
+		Life = 0.0f;
+
+		lifeGauge.setRemainingLife (Life);
+
 		anim.SetTrigger (DIE_TRIGGER_HASH);
 	}
 
@@ -138,6 +158,9 @@ public class Character : MonoBehaviour {
 
 	void Awake () {
 		planet = GameObject.Find ("Planet");
+		oxygenGauge = GameObject.Find ("Canvas/OxygenGauge").GetComponent<OxygenGauge> ();
+		lifeGauge = GameObject.Find ("Canvas/LifeGauge").GetComponent<LifeGauge> ();
+
 		rigidBody = GetComponent<Rigidbody2D> ();
 		anim = GetComponent<Animator> ();
 		sprite = transform.Find ("CharacterV").gameObject;
@@ -147,13 +170,13 @@ public class Character : MonoBehaviour {
 		notOnTheFloorCoroutine = null;
 		tryingToJump = false;
 
-		life = 100.0f;
-		oxygen = 100.0f;
+		Life = 100.0f;
+		Oxygen = 100.0f;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (life == 0.0f)
+		if (Life == 0.0f)
 			return;
 		
 		Vector3 _direction = transform.position - planet.transform.position;
@@ -201,5 +224,19 @@ public class Character : MonoBehaviour {
 			}
 		} else
 			tryingToJump = false;
+
+		Oxygen -= (Time.deltaTime * Constants.O2_PER_SECOND);
+		if (Oxygen <= 0.0f) {
+			Oxygen = 0.0f;
+			Life -= (Time.deltaTime * Constants.LIFE_WITH_NO_O2_PER_SECOND);
+			if (Life <= 0.0f) {
+				Life = 0.0f;
+				die ();
+			}
+		}
+
+		oxygenGauge.setRemainingOxygen (Oxygen);
+
+		lifeGauge.setRemainingLife (Life);
 	}
 }
