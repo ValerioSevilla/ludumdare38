@@ -45,3 +45,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: PlanetLayer
+    uniqueID: 503492923
+    locked: 0
