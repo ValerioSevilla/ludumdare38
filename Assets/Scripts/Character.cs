@@ -5,7 +5,6 @@ using UnityEngine;
 public class Character : MonoBehaviour {
 
 	private static class Constants {
-		public const float GRAVITY_MAGNITUDE = -9.8f;
 		public const float WALK_FORCE = 20.0f;
 		public const float JUMP_FORCE = 1.0f;
 		public const float JUMP_FORCE_DEGRADATION_TIME = 0.5f;
@@ -100,7 +99,7 @@ public class Character : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		Vector3 _direction = transform.position - planet.transform.position;
-		Vector2 _gravity = new Vector2 (_direction.x, _direction.y).normalized * Constants.GRAVITY_MAGNITUDE;
+		Vector2 _gravity = new Vector2 (_direction.x, _direction.y).normalized * Common.Constants.GRAVITY_MAGNITUDE;
 
 		rigidBody.AddForce (rigidBody.mass * _gravity);
 		transform.rotation = Quaternion.LookRotation(Vector3.back, _direction);
