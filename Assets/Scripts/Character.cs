@@ -45,6 +45,7 @@ public class Character : MonoBehaviour {
 	private Coroutine jumpForceCoroutine;
 	private Coroutine notOnTheFloorCoroutine;
 	private bool tryingToJump;
+	private bool gameStarted;
 
 	private float life;
 	public float Life {
@@ -116,6 +117,10 @@ public class Character : MonoBehaviour {
 
 	public void commitDeath () {
 		GameObject.Find ("Canvas/Fade").GetComponent<FadeScript> ().fadeOut ("Main");
+	}
+
+	public void startGame () {
+		gameStarted = true;
 	}
 
 	private void damage (float _damage) {
@@ -193,19 +198,25 @@ public class Character : MonoBehaviour {
 
 		Life = 100.0f;
 		Oxygen = 100.0f;
+
+		gameStarted = false;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (Life == 0.0f)
-			return;
-		
 		Vector3 _direction = transform.position - planet.transform.position;
 		Vector2 _gravity = new Vector2 (_direction.x, _direction.y).normalized * Common.Constants.GRAVITY_MAGNITUDE;
 
-		rigidBody.AddForce (rigidBody.mass * _gravity);
 		transform.rotation = Quaternion.LookRotation(Vector3.forward, _direction);
+		
+		if (Life == 0.0f)
+			return;
 
+		rigidBody.AddForce (rigidBody.mass * _gravity);
+
+		if (!gameStarted)
+			return;
+		
 		Vector3 _walkVector = Vector3.Cross (Vector3.back, _direction).normalized;
 		Vector2 _walkDirection = new Vector2 (_walkVector.x, _walkVector.y);
 
