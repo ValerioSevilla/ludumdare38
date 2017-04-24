@@ -9,6 +9,7 @@ TagManager:
   - Hill
   - Rock
   - Deadly
+  - Spaceship
   layers:
   - Default
   - TransparentFX
