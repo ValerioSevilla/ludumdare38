@@ -83,6 +83,8 @@ public class Character : MonoBehaviour {
 			}
 		} else if (coll.gameObject.tag == "Deadly") {
 			die ();
+		} else if (coll.gameObject.tag == "Spaceship") {
+			win ();
 		}
 
 	}
@@ -98,6 +100,10 @@ public class Character : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	private void win () {
+		GameObject.Find ("Canvas/Fade").GetComponent<FadeScript> ().fadeOut ("Win");
 	}
 
 	private void die () {
