@@ -7,9 +7,18 @@ public class CameraController : MonoBehaviour {
 	public GameObject target;
 
 	private Vector3 cameraOffset;
+	private Animator anim;
+	private Character character;
+
+	public void introFinished() {
+		anim.enabled = false;
+		character.startGame ();
+	}
 
 	void Awake () {
 		cameraOffset = transform.position - target.transform.position;
+		anim = GetComponent<Animator> ();
+		character = GameObject.Find ("Character").GetComponent<Character> ();
 	}
 
 	void Update () {
