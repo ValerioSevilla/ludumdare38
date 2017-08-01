@@ -41,6 +41,7 @@ public class Character : MonoBehaviour {
 	private Animator anim;
 	private GameObject sprite;
 
+	private Vector2 slopeDirection;
 	private HashSet<GameObject> onTheGround;
 	private Coroutine jumpForceCoroutine;
 	private Coroutine notOnTheFloorCoroutine;
@@ -90,12 +91,26 @@ public class Character : MonoBehaviour {
 
 	}
 
+	void OnCollisionStay2D(Collision2D coll) {
+		Vector2 _contactNormal = Vector2.zero;
+		foreach (var _contactPoint in coll.contacts) {
+			_contactNormal += _contactPoint.normal;
+		}
+
+		_contactNormal.Normalize ();
+
+		Vector2 _absoluteNormal = Quaternion.Inverse (transform.localRotation) * _contactNormal;
+		slopeDirection = Vector3.Cross (Vector3.back, _absoluteNormal).normalized;
+		transform.Find ("CollisionArrow").localRotation = Quaternion.LookRotation (Vector3.forward, _absoluteNormal);
+	}
+
 	void OnCollisionExit2D(Collision2D coll) {
 		if (coll.gameObject.tag == "Ground" || coll.gameObject.tag == "Rock") {
 			if (onTheGround.Contains (coll.gameObject)) {
 				onTheGround.Remove (coll.gameObject);
 
 				if (onTheGround.Count == 0) {
+					slopeDirection = Vector2.zero;
 					if (notOnTheFloorCoroutine == null)
 						notOnTheFloorCoroutine = StartCoroutine (leavingFloorWait ());
 				}
@@ -132,7 +147,6 @@ public class Character : MonoBehaviour {
 	}
 
 	private IEnumerator leavingFloorWait (){
-		float _elapsedTime = 0.0f;
 
 		yield return new WaitForSeconds (Constants.LEAVING_FLOOR_WAIT_TIME);
 
@@ -166,12 +180,17 @@ public class Character : MonoBehaviour {
 		jumpForceCoroutine = null;
 	}
 
+	private static Vector2 projectVector(Vector2 _source, Vector2 _dst) {
+		float _dstMagnitude = _dst.magnitude;
+
+		return _dst * (Vector2.Dot (_source, _dst) / (_dstMagnitude * _dstMagnitude));
+	}
+
 	private Vector2 getWalkForce(Vector2 _walkDirection) {
 		float _walkDirectionVectorMagnitude = _walkDirection.magnitude;
 
 		// Project the current velocity onto the walk direction vector
-		Vector2 _currentWalkVector = _walkDirection
-			* (Vector2.Dot (rigidBody.velocity, _walkDirection) / (_walkDirectionVectorMagnitude * _walkDirectionVectorMagnitude));
+		Vector2 _currentWalkVector = projectVector(rigidBody.velocity, _walkDirection);
 		
 		float _currentWalkMagnitude = _currentWalkVector.magnitude;
 		float _walkForceFactor = (Constants.MAX_LINEAR_VELOCITY - _currentWalkMagnitude) * Constants.MAX_LINEAR_VELOCITY_INVERSE;
@@ -201,14 +220,13 @@ public class Character : MonoBehaviour {
 
 		gameStarted = false;
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+	void FixedUpdate () {
 		Vector3 _direction = transform.position - planet.transform.position;
 		Vector2 _gravity = new Vector2 (_direction.x, _direction.y).normalized * Common.Constants.GRAVITY_MAGNITUDE;
 
 		transform.rotation = Quaternion.LookRotation(Vector3.forward, _direction);
-		
+
 		if (Life == 0.0f)
 			return;
 
@@ -216,12 +234,23 @@ public class Character : MonoBehaviour {
 
 		if (!gameStarted)
 			return;
-		
+
 		Vector3 _walkVector = Vector3.Cross (Vector3.back, _direction).normalized;
 		Vector2 _walkDirection = new Vector2 (_walkVector.x, _walkVector.y);
 
 		Vector2 _walkForce = getWalkForce (_walkDirection);
 		rigidBody.AddForce (_walkForce);
+
+		anim.SetBool (WALKING_BOOL_HASH, _walkForce.magnitude >= Constants.NOT_WALKING_THRESHOLD);
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		if (!gameStarted)
+			return;
+		
+		if (Life == 0.0f)
+			return;
 
 		// Invert the character if needed
 		float _horizontalAxis = Input.GetAxis ("Horizontal");
@@ -242,8 +271,6 @@ public class Character : MonoBehaviour {
 				);
 			}
 		}
-
-		anim.SetBool (WALKING_BOOL_HASH, _walkForce.magnitude >= Constants.NOT_WALKING_THRESHOLD);
 
 		float _jumpCommand = Input.GetAxis ("Jump");
 		if (_jumpCommand > 0.0f) {
