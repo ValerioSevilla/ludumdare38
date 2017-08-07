@@ -42,6 +42,7 @@ public class Character : MonoBehaviour {
 	private GameObject sprite;
 
 	private Vector2 slopeDirection;
+	private Vector2 upDirection;
 	private HashSet<GameObject> onTheGround;
 	private Coroutine jumpForceCoroutine;
 	private Coroutine notOnTheFloorCoroutine;
@@ -223,7 +224,8 @@ public class Character : MonoBehaviour {
 
 	void FixedUpdate () {
 		Vector3 _direction = transform.position - planet.transform.position;
-		Vector2 _gravity = new Vector2 (_direction.x, _direction.y).normalized * Common.Constants.GRAVITY_MAGNITUDE;
+		upDirection = new Vector2 (_direction.x, _direction.y).normalized;
+		Vector2 _gravity = upDirection * Common.Constants.GRAVITY_MAGNITUDE;
 
 		transform.rotation = Quaternion.LookRotation(Vector3.forward, _direction);
 
