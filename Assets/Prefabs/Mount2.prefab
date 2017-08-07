@@ -64,14 +64,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1149966115416968}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.4090184, y: 37.55, z: 0.8043745}
+  m_LocalRotation: {x: -0, y: -0, z: -0.040585972, w: 0.9991761}
+  m_LocalPosition: {x: 5.12, y: 37.32, z: 0.8043745}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4227137841565508}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -4.6520004}
 --- !u!68 &68110373630760142
 EdgeCollider2D:
   m_ObjectHideFlags: 1
@@ -112,8 +112,8 @@ EdgeCollider2D:
   - {x: -1.9871069, y: 0.9101448}
   - {x: -1.9926919, y: 0.6907234}
   - {x: -1.9652277, y: 0.6192131}
-  - {x: -1.9853379, y: 0.445179}
-  - {x: -2.0545013, y: 0.4220314}
+  - {x: -1.9814732, y: 0.47644022}
+  - {x: -2.0593245, y: 0.40023777}
   - {x: -2.1182718, y: 0.20383072}
   - {x: -2.1719239, y: 0.07117081}
   - {x: -2.250072, y: -0.06174469}
