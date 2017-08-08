@@ -26,6 +26,8 @@ public class Character : MonoBehaviour {
 
 		public const float FALL_DAMAGE_THRESHOLD = 15.0f;
 		public const float FALL_DAMAGE = 25.0f;
+
+		public const float MAX_SLOPE_VERTICAL_ANGLE_TO_WALK = 50.625f;
 	}
 
 	private static int ONTHEFLOOR_BOOL_HASH = Animator.StringToHash ("OnTheFloor");
@@ -41,7 +43,7 @@ public class Character : MonoBehaviour {
 	private Animator anim;
 	private GameObject sprite;
 
-	private Vector2 slopeDirection;
+	private Vector2 slopeNormal;
 	private Vector2 upDirection;
 	private HashSet<GameObject> onTheGround;
 	private Coroutine jumpForceCoroutine;
@@ -66,7 +68,11 @@ public class Character : MonoBehaviour {
 			damage (Constants.FALL_DAMAGE);
 		}
 
-		if (coll.gameObject.tag == "Ground" || coll.gameObject.tag == "Rock") {
+		if (coll.gameObject.tag == "Deadly") {
+			die ();
+		} else if (coll.gameObject.tag == "Spaceship") {
+			win ();
+		} else {// if (coll.gameObject.tag == "Ground" || coll.gameObject.tag == "Rock") {
 			{//if (coll.relativeVelocity.y > 0.0f && coll.relativeVelocity.y > Mathf.Abs(coll.relativeVelocity.x)) {
 				if (jumpForceCoroutine != null) {
 					StopCoroutine (jumpForceCoroutine);
@@ -84,34 +90,23 @@ public class Character : MonoBehaviour {
 
 				anim.SetBool (ONTHEFLOOR_BOOL_HASH, true);
 			}
-		} else if (coll.gameObject.tag == "Deadly") {
-			die ();
-		} else if (coll.gameObject.tag == "Spaceship") {
-			win ();
 		}
 
 	}
 
 	void OnCollisionStay2D(Collision2D coll) {
-		Vector2 _contactNormal = Vector2.zero;
 		foreach (var _contactPoint in coll.contacts) {
-			_contactNormal += _contactPoint.normal;
+			slopeNormal += _contactPoint.normal;
 		}
-
-		_contactNormal.Normalize ();
-
-		Vector2 _absoluteNormal = Quaternion.Inverse (transform.localRotation) * _contactNormal;
-		slopeDirection = Vector3.Cross (Vector3.back, _absoluteNormal).normalized;
-		transform.Find ("CollisionArrow").localRotation = Quaternion.LookRotation (Vector3.forward, _absoluteNormal);
 	}
 
 	void OnCollisionExit2D(Collision2D coll) {
-		if (coll.gameObject.tag == "Ground" || coll.gameObject.tag == "Rock") {
+		if (coll.gameObject.tag != "Deadly" && coll.gameObject.tag != "Spaceship") {
 			if (onTheGround.Contains (coll.gameObject)) {
 				onTheGround.Remove (coll.gameObject);
 
 				if (onTheGround.Count == 0) {
-					slopeDirection = Vector2.zero;
+					slopeNormal = Vector2.zero;
 					if (notOnTheFloorCoroutine == null)
 						notOnTheFloorCoroutine = StartCoroutine (leavingFloorWait ());
 				}
@@ -199,6 +194,9 @@ public class Character : MonoBehaviour {
 		_walkForceFactor = Mathf.Max (_walkForceFactor, -Constants.WALK_FORCE);
 		float _walkForce = Constants.WALK_FORCE * _walkForceFactor;
 
+		if (slopeNormal != Vector2.zero && Vector2.Angle (upDirection, slopeNormal) > Constants.MAX_SLOPE_VERTICAL_ANGLE_TO_WALK)
+			return Vector2.zero;
+
 		return _walkDirection * rigidBody.mass * Input.GetAxis ("Horizontal") * _walkForce;
 	}
 
@@ -229,6 +227,13 @@ public class Character : MonoBehaviour {
 
 		transform.rotation = Quaternion.LookRotation(Vector3.forward, _direction);
 
+		{	// Finish slope normal calculation
+			slopeNormal.Normalize ();
+
+			Vector2 _localSlopeNormal = Quaternion.Inverse (transform.localRotation) * slopeNormal;
+			transform.Find ("CollisionArrow").localRotation = Quaternion.LookRotation (Vector3.forward, _localSlopeNormal);
+		}
+
 		if (Life == 0.0f)
 			return;
 
@@ -244,6 +249,9 @@ public class Character : MonoBehaviour {
 		rigidBody.AddForce (_walkForce);
 
 		anim.SetBool (WALKING_BOOL_HASH, _walkForce.magnitude >= Constants.NOT_WALKING_THRESHOLD);
+
+		// Reset slope normal
+		slopeNormal = Vector2.zero;
 	}
 	
 	// Update is called once per frame
