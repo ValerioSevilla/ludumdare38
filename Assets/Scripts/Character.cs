@@ -13,11 +13,6 @@ public class Character : MonoBehaviour {
 		public const float MAX_LINEAR_VELOCITY = 10.0f;
 		public const float MAX_LINEAR_VELOCITY_INVERSE = 1.0f / MAX_LINEAR_VELOCITY;
 
-		public const int IDLE_STATUS_CODE = 0;
-		public const int WALK_STATUS_CODE = 1;
-		public const int JUMP_STATUS_CODE = 2;
-		public const int FALL_STATUS_CODE = 3;
-
 		public const float NOT_WALKING_THRESHOLD = 0.01f;
 		public const float LEAVING_FLOOR_WAIT_TIME = 0.05f;
 
