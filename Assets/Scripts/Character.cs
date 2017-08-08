@@ -27,12 +27,13 @@ public class Character : MonoBehaviour {
 		public const float FALL_DAMAGE_THRESHOLD = 15.0f;
 		public const float FALL_DAMAGE = 25.0f;
 
-		public const float MAX_SLOPE_VERTICAL_ANGLE_TO_WALK = 50.625f;
+		public const float MAX_SLOPE_VERTICAL_ANGLE_TO_WALK = 45.0f;
 	}
 
 	private static int ONTHEFLOOR_BOOL_HASH = Animator.StringToHash ("OnTheFloor");
 	private static int WALKING_BOOL_HASH = Animator.StringToHash ("Walking");
 	private static int JUMPING_BOOL_HASH = Animator.StringToHash ("Jumping");
+	private static int SLIPPING_BOOL_HASH = Animator.StringToHash ("Slipping");
 	private static int DIE_TRIGGER_HASH = Animator.StringToHash ("Die");
 
 	private GameObject planet;
@@ -194,7 +195,7 @@ public class Character : MonoBehaviour {
 		_walkForceFactor = Mathf.Max (_walkForceFactor, -Constants.WALK_FORCE);
 		float _walkForce = Constants.WALK_FORCE * _walkForceFactor;
 
-		if (slopeNormal != Vector2.zero && Vector2.Angle (upDirection, slopeNormal) > Constants.MAX_SLOPE_VERTICAL_ANGLE_TO_WALK)
+		if (anim.GetBool (SLIPPING_BOOL_HASH))
 			return Vector2.zero;
 
 		return _walkDirection * rigidBody.mass * Input.GetAxis ("Horizontal") * _walkForce;
@@ -220,6 +221,13 @@ public class Character : MonoBehaviour {
 		gameStarted = false;
 	}
 
+	void checkSlipping () {
+		anim.SetBool (
+			SLIPPING_BOOL_HASH,
+			(slopeNormal != Vector2.zero && (Vector2.Angle (upDirection, slopeNormal) > Constants.MAX_SLOPE_VERTICAL_ANGLE_TO_WALK))
+		);
+	}
+
 	void FixedUpdate () {
 		Vector3 _direction = transform.position - planet.transform.position;
 		upDirection = new Vector2 (_direction.x, _direction.y).normalized;
@@ -233,6 +241,8 @@ public class Character : MonoBehaviour {
 			Vector2 _localSlopeNormal = Quaternion.Inverse (transform.localRotation) * slopeNormal;
 			transform.Find ("CollisionArrow").localRotation = Quaternion.LookRotation (Vector3.forward, _localSlopeNormal);
 		}
+
+		checkSlipping ();
 
 		if (Life == 0.0f)
 			return;
@@ -285,7 +295,7 @@ public class Character : MonoBehaviour {
 		float _jumpCommand = Input.GetAxis ("Jump");
 		if (_jumpCommand > 0.0f) {
 			if (!tryingToJump) {
-				if (onTheGround.Count > 0) {
+				if (onTheGround.Count > 0 && !anim.GetBool(SLIPPING_BOOL_HASH)) {
 					if (jumpForceCoroutine == null)
 						jumpForceCoroutine = StartCoroutine (jumpForce ());
 				}
