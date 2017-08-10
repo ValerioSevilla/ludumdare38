@@ -6,7 +6,7 @@ public class Character : MonoBehaviour {
 
 	private static class Constants {
 		public const float WALK_FORCE = 20.0f;
-		public const float JUMP_FORCE = 0.75f;
+		public const float JUMP_FORCE = 0.875f;
 		public const float JUMP_FORCE_DEGRADATION_TIME = 0.5f;
 		public const float JUMP_FORCE_DEGRADATION_TIME_INVERSE = 1.0f / JUMP_FORCE_DEGRADATION_TIME;
 
