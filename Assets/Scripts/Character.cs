@@ -91,6 +91,9 @@ public class Character : MonoBehaviour {
 	}
 
 	void OnCollisionStay2D(Collision2D coll) {
+		if (coll.gameObject.tag == "Rock")
+			return;
+		
 		foreach (var _contactPoint in coll.contacts) {
 			slopeNormal += _contactPoint.normal;
 		}
