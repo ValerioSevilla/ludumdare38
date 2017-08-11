@@ -2910,7 +2910,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1807415929}
-  - component: {fileID: 1807415928}
+  - component: {fileID: 1807415931}
   - component: {fileID: 1807415927}
   - component: {fileID: 1807415926}
   - component: {fileID: 1807415930}
@@ -2952,31 +2952,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &1807415928
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1807415925}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 6200000, guid: c7c4dae12886d4874bc2a25e79d93438, type: 2}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: -0.043000698, y: 1.0315418}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1.3175018, y: 2.1329231}
-  m_EdgeRadius: 0
 --- !u!4 &1807415929
 Transform:
   m_ObjectHideFlags: 0
@@ -3009,6 +2984,21 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!70 &1807415931
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1807415925}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 6200000, guid: c7c4dae12886d4874bc2a25e79d93438, type: 2}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.05, y: 1.04}
+  m_Size: {x: 1.34, y: 2.16}
+  m_Direction: 0
 --- !u!1 &1812369269
 GameObject:
   m_ObjectHideFlags: 0
