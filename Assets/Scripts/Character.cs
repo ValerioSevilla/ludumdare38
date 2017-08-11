@@ -182,21 +182,28 @@ public class Character : MonoBehaviour {
 	}
 
 	private Vector2 getWalkForce(Vector2 _walkDirection) {
-		float _walkDirectionVectorMagnitude = _walkDirection.magnitude;
-
-		// Project the current velocity onto the walk direction vector
-		Vector2 _currentWalkVector = projectVector(rigidBody.velocity, _walkDirection);
-		
-		float _currentWalkMagnitude = _currentWalkVector.magnitude;
-		float _walkForceFactor = (Constants.MAX_LINEAR_VELOCITY - _currentWalkMagnitude) * Constants.MAX_LINEAR_VELOCITY_INVERSE;
-		_walkForceFactor = Mathf.Min (_walkForceFactor, Constants.WALK_FORCE);
-		_walkForceFactor = Mathf.Max (_walkForceFactor, -Constants.WALK_FORCE);
-		float _walkForce = Constants.WALK_FORCE * _walkForceFactor;
-
 		if (anim.GetBool (SLIPPING_BOOL_HASH))
 			return Vector2.zero;
 
-		return _walkDirection * rigidBody.mass * Input.GetAxis ("Horizontal") * _walkForce;
+		float _walkDirectionVectorMagnitude = _walkDirection.magnitude;
+		float _controllerDirection = Input.GetAxis ("Horizontal");
+		float _currentDirection = Vector3.Cross (rigidBody.velocity, upDirection).z < 0.0f ? -1.0f : 1.0f;
+
+		float _walkForce;
+		if (_controllerDirection * _currentDirection < 0.0f)	// Opposite direction
+			_walkForce = Constants.WALK_FORCE;
+		else {
+			// Project the current velocity onto the walk direction vector
+			Vector2 _currentWalkVector = projectVector(rigidBody.velocity, _walkDirection);
+			
+			float _currentWalkMagnitude = _currentWalkVector.magnitude;
+			float _walkForceFactor = (Constants.MAX_LINEAR_VELOCITY - _currentWalkMagnitude) * Constants.MAX_LINEAR_VELOCITY_INVERSE;
+			_walkForceFactor = Mathf.Min (_walkForceFactor, Constants.WALK_FORCE);
+			_walkForceFactor = Mathf.Max (_walkForceFactor, -Constants.WALK_FORCE);
+			_walkForce = Constants.WALK_FORCE * _walkForceFactor;
+		}
+
+		return _walkDirection * rigidBody.mass * _controllerDirection * _walkForce;
 	}
 
 	void Awake () {
