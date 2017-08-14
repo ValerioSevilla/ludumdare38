@@ -81,8 +81,11 @@ public class Character : MonoBehaviour {
 	}
 
 	void OnTriggerStay2D(Collider2D coll) {
-		if (coll.gameObject.tag != "Deadly" && coll.gameObject.tag != "Spaceship")
+		if (coll.gameObject.tag != "Deadly"
+			&& coll.gameObject.tag != "Spaceship"
+			&& coll.gameObject.tag != "Hill") {
 			onTheGround = true;
+		}
 	}
 
 	private void checkGroundStatus() {
@@ -298,7 +301,7 @@ public class Character : MonoBehaviour {
 		float _jumpCommand = Input.GetAxis ("Jump");
 		if (_jumpCommand > 0.0f) {
 			if (!tryingToJump) {
-				if (anim.GetBool(ONTHEFLOOR_BOOL_HASH) && !anim.GetBool(SLIPPING_BOOL_HASH)) {
+				if (anim.GetBool(ONTHEFLOOR_BOOL_HASH)) {
 					if (jumpForceCoroutine == null)
 						jumpForceCoroutine = StartCoroutine (jumpForce ());
 				}
