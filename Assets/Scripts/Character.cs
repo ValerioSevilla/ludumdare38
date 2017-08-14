@@ -14,7 +14,7 @@ public class Character : MonoBehaviour {
 		public const float MAX_LINEAR_VELOCITY_INVERSE = 1.0f / MAX_LINEAR_VELOCITY;
 
 		public const float NOT_WALKING_THRESHOLD = 0.01f;
-		public const float LEAVING_FLOOR_WAIT_TIME = 0.05f;
+		public const float LEAVING_FLOOR_WAIT_TIME = 0.025f;
 
 		public const float O2_PER_SECOND = 1.5f;
 		public const float LIFE_WITH_NO_O2_PER_SECOND = 7.0f;
@@ -41,7 +41,7 @@ public class Character : MonoBehaviour {
 
 	private Vector2 slopeNormal;
 	private Vector2 upDirection;
-	private HashSet<GameObject> onTheGround;
+	private bool onTheGround;
 	private Coroutine jumpForceCoroutine;
 	private Coroutine notOnTheFloorCoroutine;
 	private bool tryingToJump;
@@ -68,26 +68,7 @@ public class Character : MonoBehaviour {
 			die ();
 		} else if (coll.gameObject.tag == "Spaceship") {
 			win ();
-		} else {// if (coll.gameObject.tag == "Ground" || coll.gameObject.tag == "Rock") {
-			{//if (coll.relativeVelocity.y > 0.0f && coll.relativeVelocity.y > Mathf.Abs(coll.relativeVelocity.x)) {
-				if (jumpForceCoroutine != null) {
-					StopCoroutine (jumpForceCoroutine);
-					jumpForceCoroutine = null;
-
-					anim.SetBool (JUMPING_BOOL_HASH, false);
-				}
-
-				onTheGround.Add (coll.gameObject);
-
-				if (notOnTheFloorCoroutine != null) {
-					StopCoroutine (notOnTheFloorCoroutine);
-					notOnTheFloorCoroutine = null;
-				}
-
-				anim.SetBool (ONTHEFLOOR_BOOL_HASH, true);
-			}
 		}
-
 	}
 
 	void OnCollisionStay2D(Collision2D coll) {
@@ -99,17 +80,34 @@ public class Character : MonoBehaviour {
 		}
 	}
 
-	void OnCollisionExit2D(Collision2D coll) {
-		if (coll.gameObject.tag != "Deadly" && coll.gameObject.tag != "Spaceship") {
-			if (onTheGround.Contains (coll.gameObject)) {
-				onTheGround.Remove (coll.gameObject);
+	void OnTriggerStay2D(Collider2D coll) {
+		if (coll.gameObject.tag != "Deadly" && coll.gameObject.tag != "Spaceship")
+			onTheGround = true;
+	}
 
-				if (onTheGround.Count == 0) {
-					slopeNormal = Vector2.zero;
-					if (notOnTheFloorCoroutine == null)
-						notOnTheFloorCoroutine = StartCoroutine (leavingFloorWait ());
+	private void checkGroundStatus() {
+		if (onTheGround) {
+			if (!anim.GetBool (ONTHEFLOOR_BOOL_HASH)) {
+				if (jumpForceCoroutine != null) {
+					StopCoroutine (jumpForceCoroutine);
+					jumpForceCoroutine = null;
+
+					anim.SetBool (JUMPING_BOOL_HASH, false);
 				}
+
+				anim.SetBool (ONTHEFLOOR_BOOL_HASH, true);
 			}
+
+			if (notOnTheFloorCoroutine != null) {
+				StopCoroutine (notOnTheFloorCoroutine);
+				notOnTheFloorCoroutine = null;
+			}
+
+			onTheGround = false;
+		} else {
+			slopeNormal = Vector2.zero;
+			if (notOnTheFloorCoroutine == null)
+				notOnTheFloorCoroutine = StartCoroutine (leavingFloorWait ());
 		}
 	}
 
@@ -215,7 +213,6 @@ public class Character : MonoBehaviour {
 		anim = GetComponent<Animator> ();
 		sprite = transform.Find ("CharacterV").gameObject;
 
-		onTheGround = new HashSet<GameObject> ();
 		jumpForceCoroutine = null;
 		notOnTheFloorCoroutine = null;
 		tryingToJump = false;
@@ -248,6 +245,7 @@ public class Character : MonoBehaviour {
 		}
 
 		checkSlipping ();
+		checkGroundStatus ();
 
 		if (Life == 0.0f)
 			return;
@@ -300,7 +298,7 @@ public class Character : MonoBehaviour {
 		float _jumpCommand = Input.GetAxis ("Jump");
 		if (_jumpCommand > 0.0f) {
 			if (!tryingToJump) {
-				if (onTheGround.Count > 0 && !anim.GetBool(SLIPPING_BOOL_HASH)) {
+				if (anim.GetBool(ONTHEFLOOR_BOOL_HASH) && !anim.GetBool(SLIPPING_BOOL_HASH)) {
 					if (jumpForceCoroutine == null)
 						jumpForceCoroutine = StartCoroutine (jumpForce ());
 				}
