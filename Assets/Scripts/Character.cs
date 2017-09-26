@@ -226,11 +226,31 @@ public class Character : MonoBehaviour {
 		gameStarted = false;
 	}
 
-	void checkSlipping () {
+	private void updateSlipping () {
 		anim.SetBool (
 			SLIPPING_BOOL_HASH,
 			(slopeNormal != Vector2.zero && (Vector2.Angle (upDirection, slopeNormal) > Constants.MAX_SLOPE_VERTICAL_ANGLE_TO_WALK))
 		);
+	}
+	
+	private void lookLeft () {
+		if (sprite.transform.localScale.x > 0.0f) {
+			sprite.transform.localScale = new Vector3 (
+				-sprite.transform.localScale.x,
+				sprite.transform.localScale.y,
+				sprite.transform.localScale.z
+			);
+		}
+	}
+	
+	private void lookRight () {
+		if (sprite.transform.localScale.x < 0.0f) {
+			sprite.transform.localScale = new Vector3 (
+				-sprite.transform.localScale.x,
+				sprite.transform.localScale.y,
+				sprite.transform.localScale.z
+			);
+		}
 	}
 
 	void FixedUpdate () {
@@ -247,7 +267,7 @@ public class Character : MonoBehaviour {
 			transform.Find ("CollisionArrow").localRotation = Quaternion.LookRotation (Vector3.forward, _localSlopeNormal);
 		}
 
-		checkSlipping ();
+		updateSlipping ();
 		checkGroundStatus ();
 
 		if (Life == 0.0f)
@@ -280,23 +300,10 @@ public class Character : MonoBehaviour {
 
 		// Invert the character if needed
 		float _horizontalAxis = Input.GetAxis ("Horizontal");
-		if (_horizontalAxis < 0.0f) {
-			if (sprite.transform.localScale.x > 0.0f) {
-				sprite.transform.localScale = new Vector3 (
-					-sprite.transform.localScale.x,
-					sprite.transform.localScale.y,
-					sprite.transform.localScale.z
-				);
-			}
-		} else if (_horizontalAxis > 0.0f) {
-			if (sprite.transform.localScale.x < 0.0f) {
-				sprite.transform.localScale = new Vector3 (
-					-sprite.transform.localScale.x,
-					sprite.transform.localScale.y,
-					sprite.transform.localScale.z
-				);
-			}
-		}
+		if (_horizontalAxis < 0.0f)
+			lookLeft ();
+		else if (_horizontalAxis > 0.0f)
+			lookRight ();
 
 		float _jumpCommand = Input.GetAxis ("Jump");
 		if (_jumpCommand > 0.0f) {
