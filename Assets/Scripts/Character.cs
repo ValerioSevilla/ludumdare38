@@ -30,6 +30,7 @@ public class Character : MonoBehaviour {
 	private static int JUMPING_BOOL_HASH = Animator.StringToHash ("Jumping");
 	private static int SLIPPING_BOOL_HASH = Animator.StringToHash ("Slipping");
 	private static int DIE_TRIGGER_HASH = Animator.StringToHash ("Die");
+	private static int LOOKINGLEFT_TRIGGER_HASH = Animator.StringToHash ("LookingLeft");
 
 	private static int SPACEMAN_SLIPPING_ANIM_HASH = Animator.StringToHash ("Base Layer.SpacemanSlipping");
 
@@ -246,23 +247,11 @@ public class Character : MonoBehaviour {
 	}
 	
 	private void lookLeft () {
-		if (sprite.transform.localScale.x > 0.0f) {
-			sprite.transform.localScale = new Vector3 (
-				-sprite.transform.localScale.x,
-				sprite.transform.localScale.y,
-				sprite.transform.localScale.z
-			);
-		}
+		anim.SetBool (LOOKINGLEFT_TRIGGER_HASH, true);
 	}
 	
 	private void lookRight () {
-		if (sprite.transform.localScale.x < 0.0f) {
-			sprite.transform.localScale = new Vector3 (
-				-sprite.transform.localScale.x,
-				sprite.transform.localScale.y,
-				sprite.transform.localScale.z
-			);
-		}
+		anim.SetBool (LOOKINGLEFT_TRIGGER_HASH, false);
 	}
 
 	void FixedUpdate () {
