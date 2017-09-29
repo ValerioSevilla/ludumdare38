@@ -31,6 +31,8 @@ public class Character : MonoBehaviour {
 	private static int SLIPPING_BOOL_HASH = Animator.StringToHash ("Slipping");
 	private static int DIE_TRIGGER_HASH = Animator.StringToHash ("Die");
 
+	private static int SPACEMAN_SLIPPING_ANIM_HASH = Animator.StringToHash ("SpacemanSlipping");
+
 	private GameObject planet;
 	private OxygenGauge oxygenGauge;
 	private LifeGauge lifeGauge;
@@ -226,11 +228,21 @@ public class Character : MonoBehaviour {
 		gameStarted = false;
 	}
 
-	private void updateSlipping () {
+	private bool updateSlipping () {
+		bool _condition = (slopeNormal != Vector2.zero && (Vector2.Angle (upDirection, slopeNormal) > Constants.MAX_SLOPE_VERTICAL_ANGLE_TO_WALK));
 		anim.SetBool (
 			SLIPPING_BOOL_HASH,
-			(slopeNormal != Vector2.zero && (Vector2.Angle (upDirection, slopeNormal) > Constants.MAX_SLOPE_VERTICAL_ANGLE_TO_WALK))
+			_condition
 		);
+
+		if (_condition) {
+			if (Vector3.Cross (upDirection, slopeNormal).z > 0.0f)
+				lookLeft ();
+			else
+				lookRight ();
+		}
+
+		return anim.GetCurrentAnimatorStateInfo(0).fullPathHash == SPACEMAN_SLIPPING_ANIM_HASH;
 	}
 	
 	private void lookLeft () {
@@ -267,7 +279,15 @@ public class Character : MonoBehaviour {
 			transform.Find ("CollisionArrow").localRotation = Quaternion.LookRotation (Vector3.forward, _localSlopeNormal);
 		}
 
-		updateSlipping ();
+		if (!updateSlipping ()) {
+			// Invert the character if needed
+			float _horizontalAxis = Input.GetAxis ("Horizontal");
+			if (_horizontalAxis < 0.0f)
+				lookLeft ();
+			else if (_horizontalAxis > 0.0f)
+				lookRight ();
+		}
+
 		checkGroundStatus ();
 
 		if (Life == 0.0f)
@@ -297,13 +317,6 @@ public class Character : MonoBehaviour {
 		
 		if (Life == 0.0f)
 			return;
-
-		// Invert the character if needed
-		float _horizontalAxis = Input.GetAxis ("Horizontal");
-		if (_horizontalAxis < 0.0f)
-			lookLeft ();
-		else if (_horizontalAxis > 0.0f)
-			lookRight ();
 
 		float _jumpCommand = Input.GetAxis ("Jump");
 		if (_jumpCommand > 0.0f) {
