@@ -31,7 +31,7 @@ public class Character : MonoBehaviour {
 	private static int SLIPPING_BOOL_HASH = Animator.StringToHash ("Slipping");
 	private static int DIE_TRIGGER_HASH = Animator.StringToHash ("Die");
 
-	private static int SPACEMAN_SLIPPING_ANIM_HASH = Animator.StringToHash ("SpacemanSlipping");
+	private static int SPACEMAN_SLIPPING_ANIM_HASH = Animator.StringToHash ("Base Layer.SpacemanSlipping");
 
 	private GameObject planet;
 	private OxygenGauge oxygenGauge;
