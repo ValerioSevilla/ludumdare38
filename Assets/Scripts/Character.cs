@@ -15,6 +15,7 @@ public class Character : MonoBehaviour {
 
 		public const float NOT_WALKING_THRESHOLD = 0.01f;
 		public const float LEAVING_FLOOR_WAIT_TIME = 0.025f;
+		public const float NOT_SLIPPING_WAIT_TIME = 0.075f;
 
 		public const float O2_PER_SECOND = 1.5f;
 		public const float LIFE_WITH_NO_O2_PER_SECOND = 7.0f;
@@ -47,6 +48,7 @@ public class Character : MonoBehaviour {
 	private bool onTheGround;
 	private Coroutine jumpForceCoroutine;
 	private Coroutine notOnTheFloorCoroutine;
+	private Coroutine notSlippingCoroutine;
 	private bool tryingToJump;
 	private bool gameStarted;
 
@@ -145,6 +147,14 @@ public class Character : MonoBehaviour {
 		}
 	}
 
+	private IEnumerator notSlippingWait () {
+		yield return new WaitForSeconds (Constants.NOT_SLIPPING_WAIT_TIME);
+
+		anim.SetBool (SLIPPING_BOOL_HASH, false);
+
+		notSlippingCoroutine = null;
+	}
+
 	private IEnumerator leavingFloorWait (){
 
 		yield return new WaitForSeconds (Constants.LEAVING_FLOOR_WAIT_TIME);
@@ -221,6 +231,7 @@ public class Character : MonoBehaviour {
 
 		jumpForceCoroutine = null;
 		notOnTheFloorCoroutine = null;
+		notSlippingCoroutine = null;
 		tryingToJump = false;
 
 		Life = 100.0f;
@@ -231,16 +242,31 @@ public class Character : MonoBehaviour {
 
 	private bool updateSlipping () {
 		bool _condition = (slopeNormal != Vector2.zero && (Vector2.Angle (upDirection, slopeNormal) > Constants.MAX_SLOPE_VERTICAL_ANGLE_TO_WALK));
-		anim.SetBool (
-			SLIPPING_BOOL_HASH,
-			_condition
-		);
+		bool _previousValue = anim.GetBool (SLIPPING_BOOL_HASH);
 
 		if (_condition) {
-			if (Vector3.Cross (upDirection, slopeNormal).z > 0.0f)
-				lookLeft ();
-			else
-				lookRight ();
+			if (notSlippingCoroutine != null) {
+				StopCoroutine (notSlippingCoroutine);
+				notSlippingCoroutine = null;
+			}
+
+			{
+				anim.SetBool (
+					SLIPPING_BOOL_HASH,
+					_condition
+				);
+
+				if (Vector3.Cross (upDirection, slopeNormal).z > 0.0f)
+					lookLeft ();
+				else
+					lookRight ();
+			}
+
+			return true;
+		} else if (notSlippingCoroutine == null && _previousValue) {	// Just stopped slipping
+			notSlippingCoroutine = StartCoroutine (notSlippingWait ());
+
+			return true;
 		}
 
 		return anim.GetCurrentAnimatorStateInfo(0).fullPathHash == SPACEMAN_SLIPPING_ANIM_HASH;
