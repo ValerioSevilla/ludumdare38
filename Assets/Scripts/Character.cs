@@ -182,7 +182,7 @@ public class Character : MonoBehaviour {
 
 			rigidBody.AddForce (_direction * (_jumpCommand * _jumpForce * rigidBody.mass), ForceMode2D.Impulse);
 
-			yield return null;
+			yield return new WaitForFixedUpdate ();
 		} while (_jumpCommand > 0.0f);
 
 		anim.SetBool (JUMPING_BOOL_HASH, false);
