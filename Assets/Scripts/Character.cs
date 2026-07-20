@@ -201,14 +201,14 @@ public class Character : MonoBehaviour {
 
 		float _walkDirectionVectorMagnitude = _walkDirection.magnitude;
 		float _controllerDirection = Input.GetAxis ("Horizontal");
-		float _currentDirection = Vector3.Cross (rigidBody.velocity, upDirection).z < 0.0f ? -1.0f : 1.0f;
+		float _currentDirection = Vector3.Cross (rigidBody.linearVelocity, upDirection).z < 0.0f ? -1.0f : 1.0f;
 
 		float _walkForce;
 		if (_controllerDirection * _currentDirection < 0.0f)	// Opposite direction
 			_walkForce = Constants.WALK_FORCE;
 		else {
 			// Project the current velocity onto the walk direction vector
-			Vector2 _currentWalkVector = projectVector(rigidBody.velocity, _walkDirection);
+			Vector2 _currentWalkVector = projectVector(rigidBody.linearVelocity, _walkDirection);
 			
 			float _currentWalkMagnitude = _currentWalkVector.magnitude;
 			float _walkForceFactor = (Constants.MAX_LINEAR_VELOCITY - _currentWalkMagnitude) * Constants.MAX_LINEAR_VELOCITY_INVERSE;
