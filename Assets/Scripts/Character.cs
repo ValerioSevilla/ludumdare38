@@ -86,9 +86,8 @@ public class Character : MonoBehaviour {
 	}
 
 	void OnTriggerStay2D(Collider2D coll) {
-		if (coll.gameObject.tag != "Deadly"
-			&& coll.gameObject.tag != "Spaceship"
-			&& coll.gameObject.tag != "Hill") {
+		if (coll.gameObject.tag == "Ground"
+			|| coll.gameObject.tag == "Rock") {
 			onTheGround = true;
 		}
 	}
