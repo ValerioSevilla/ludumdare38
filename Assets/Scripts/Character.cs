@@ -119,6 +119,38 @@ public class Character : MonoBehaviour {
 		}
 	}
 
+	private bool updateSlipping () {
+		bool _condition = (slopeNormal != Vector2.zero && (Vector2.Angle (upDirection, slopeNormal) > Constants.MAX_SLOPE_VERTICAL_ANGLE_TO_WALK));
+		bool _previousValue = anim.GetBool (SLIPPING_BOOL_HASH);
+
+		if (_condition) {
+			if (notSlippingCoroutine != null) {
+				StopCoroutine (notSlippingCoroutine);
+				notSlippingCoroutine = null;
+			}
+
+			{
+				anim.SetBool (
+					SLIPPING_BOOL_HASH,
+					_condition
+				);
+
+				if (Vector3.Cross (upDirection, slopeNormal).z > 0.0f)
+					lookLeft ();
+				else
+					lookRight ();
+			}
+
+			return true;
+		} else if (notSlippingCoroutine == null && _previousValue) {	// Just stopped slipping
+			notSlippingCoroutine = StartCoroutine (notSlippingWait ());
+
+			return true;
+		}
+
+		return anim.GetCurrentAnimatorStateInfo(0).fullPathHash == SPACEMAN_SLIPPING_ANIM_HASH;
+	}
+
 	public void commitDeath () {
 		GameObject.Find ("Canvas/Fade").GetComponent<FadeScript> ().fadeOut ("Main");
 	}
@@ -217,38 +249,6 @@ public class Character : MonoBehaviour {
 		}
 
 		return _walkDirection * rigidBody.mass * _controllerDirection * _walkForce;
-	}
-
-	private bool updateSlipping () {
-		bool _condition = (slopeNormal != Vector2.zero && (Vector2.Angle (upDirection, slopeNormal) > Constants.MAX_SLOPE_VERTICAL_ANGLE_TO_WALK));
-		bool _previousValue = anim.GetBool (SLIPPING_BOOL_HASH);
-
-		if (_condition) {
-			if (notSlippingCoroutine != null) {
-				StopCoroutine (notSlippingCoroutine);
-				notSlippingCoroutine = null;
-			}
-
-			{
-				anim.SetBool (
-					SLIPPING_BOOL_HASH,
-					_condition
-				);
-
-				if (Vector3.Cross (upDirection, slopeNormal).z > 0.0f)
-					lookLeft ();
-				else
-					lookRight ();
-			}
-
-			return true;
-		} else if (notSlippingCoroutine == null && _previousValue) {	// Just stopped slipping
-			notSlippingCoroutine = StartCoroutine (notSlippingWait ());
-
-			return true;
-		}
-
-		return anim.GetCurrentAnimatorStateInfo(0).fullPathHash == SPACEMAN_SLIPPING_ANIM_HASH;
 	}
 	
 	private void lookLeft () {
