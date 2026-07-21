@@ -172,7 +172,6 @@ public class Character : MonoBehaviour {
 		do {
 			_elapsedTime += Time.deltaTime;
 			_jumpCommand = Input.GetAxis ("Jump");
-			Vector3 _direction = (transform.position - planet.transform.position).normalized;
 
 			if(_elapsedTime > Constants.JUMP_FORCE_DEGRADATION_TIME)
 				break;
@@ -180,7 +179,7 @@ public class Character : MonoBehaviour {
 			float _jumpForceFactor = (Constants.JUMP_FORCE_DEGRADATION_TIME - _elapsedTime) * Constants.JUMP_FORCE_DEGRADATION_TIME_INVERSE;
 			float _jumpForce = Constants.JUMP_FORCE * _jumpForceFactor;
 
-			rigidBody.AddForce (_direction * (_jumpCommand * _jumpForce * rigidBody.mass), ForceMode2D.Impulse);
+			rigidBody.AddForce (upDirection * (_jumpCommand * _jumpForce * rigidBody.mass), ForceMode2D.Impulse);
 
 			yield return new WaitForFixedUpdate ();
 		} while (_jumpCommand > 0.0f);
