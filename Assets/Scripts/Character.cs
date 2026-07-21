@@ -119,18 +119,6 @@ public class Character : MonoBehaviour {
 		}
 	}
 
-	private void win () {
-		GameObject.Find ("Canvas/Fade").GetComponent<FadeScript> ().fadeOut ("Win");
-	}
-
-	private void die () {
-		Life = 0.0f;
-
-		lifeGauge.setRemainingLife (Life);
-
-		anim.SetTrigger (DIE_TRIGGER_HASH);
-	}
-
 	public void commitDeath () {
 		GameObject.Find ("Canvas/Fade").GetComponent<FadeScript> ().fadeOut ("Main");
 	}
@@ -145,6 +133,18 @@ public class Character : MonoBehaviour {
 			Life = 0.0f;
 			die ();
 		}
+	}
+
+	private void win () {
+		GameObject.Find ("Canvas/Fade").GetComponent<FadeScript> ().fadeOut ("Win");
+	}
+
+	private void die () {
+		Life = 0.0f;
+
+		lifeGauge.setRemainingLife (Life);
+
+		anim.SetTrigger (DIE_TRIGGER_HASH);
 	}
 
 	private IEnumerator notSlippingWait () {
