@@ -220,26 +220,6 @@ public class Character : MonoBehaviour {
 		return _walkDirection * rigidBody.mass * _controllerDirection * _walkForce;
 	}
 
-	void Awake () {
-		planet = GameObject.Find ("Planet");
-		oxygenGauge = GameObject.Find ("Canvas/OxygenGauge").GetComponent<OxygenGauge> ();
-		lifeGauge = GameObject.Find ("Canvas/LifeGauge").GetComponent<LifeGauge> ();
-
-		rigidBody = GetComponent<Rigidbody2D> ();
-		anim = GetComponent<Animator> ();
-		sprite = transform.Find ("CharacterV").gameObject;
-
-		jumpForceCoroutine = null;
-		notOnTheFloorCoroutine = null;
-		notSlippingCoroutine = null;
-		tryingToJump = false;
-
-		Life = 100.0f;
-		Oxygen = 100.0f;
-
-		gameStarted = false;
-	}
-
 	private bool updateSlipping () {
 		bool _condition = (slopeNormal != Vector2.zero && (Vector2.Angle (upDirection, slopeNormal) > Constants.MAX_SLOPE_VERTICAL_ANGLE_TO_WALK));
 		bool _previousValue = anim.GetBool (SLIPPING_BOOL_HASH);
@@ -278,6 +258,26 @@ public class Character : MonoBehaviour {
 	
 	private void lookRight () {
 		anim.SetBool (LOOKINGLEFT_TRIGGER_HASH, false);
+	}
+
+	void Awake () {
+		planet = GameObject.Find ("Planet");
+		oxygenGauge = GameObject.Find ("Canvas/OxygenGauge").GetComponent<OxygenGauge> ();
+		lifeGauge = GameObject.Find ("Canvas/LifeGauge").GetComponent<LifeGauge> ();
+
+		rigidBody = GetComponent<Rigidbody2D> ();
+		anim = GetComponent<Animator> ();
+		sprite = transform.Find ("CharacterV").gameObject;
+
+		jumpForceCoroutine = null;
+		notOnTheFloorCoroutine = null;
+		notSlippingCoroutine = null;
+		tryingToJump = false;
+
+		Life = 100.0f;
+		Oxygen = 100.0f;
+
+		gameStarted = false;
 	}
 
 	void FixedUpdate () {
