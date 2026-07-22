@@ -24,6 +24,8 @@ public class Character : MonoBehaviour {
 		public const float FALL_DAMAGE = 25.0f;
 
 		public const float MAX_SLOPE_VERTICAL_ANGLE_TO_WALK = 45.0f;
+
+		public const float SLIPPING_WALK_FORCE_FACTOR = 0.25f;
 	}
 
 	private static int ONTHEFLOOR_BOOL_HASH = Animator.StringToHash ("OnTheFloor");
@@ -226,8 +228,7 @@ public class Character : MonoBehaviour {
 	}
 
 	private Vector2 getWalkForce(Vector2 _walkDirection) {
-		if (anim.GetBool (SLIPPING_BOOL_HASH))
-			return Vector2.zero;
+		float _slippingWalkForceFactor = anim.GetBool (SLIPPING_BOOL_HASH) ? Constants.SLIPPING_WALK_FORCE_FACTOR : 1.0f;
 
 		float _walkDirectionVectorMagnitude = _walkDirection.magnitude;
 		float _controllerDirection = Input.GetAxis ("Horizontal");
@@ -247,7 +248,7 @@ public class Character : MonoBehaviour {
 			_walkForce = Constants.WALK_FORCE * _walkForceFactor;
 		}
 
-		return _walkDirection * rigidBody.mass * _controllerDirection * _walkForce;
+		return _walkDirection * rigidBody.mass * _controllerDirection * _walkForce * _slippingWalkForceFactor;
 	}
 	
 	private void lookLeft () {
