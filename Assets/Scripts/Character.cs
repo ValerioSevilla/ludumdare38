@@ -82,7 +82,9 @@ public class Character : MonoBehaviour {
 		if (coll.gameObject.tag == "Rock")
 			return;
 		
-		foreach (var _contactPoint in coll.contacts) {
+		ContactPoint2D[] _contactPoints = new ContactPoint2D[coll.contactCount];
+		coll.GetContacts (_contactPoints);
+		foreach (var _contactPoint in _contactPoints) {
 			slopeNormal += _contactPoint.normal;
 		}
 	}
