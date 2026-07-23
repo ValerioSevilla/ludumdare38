@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Character : MonoBehaviour {
+	public GameObject NormalDebuggerPrefab;
 
 	private static class Constants {
 		public const float WALK_FORCE = 20.0f;
@@ -87,6 +88,8 @@ public class Character : MonoBehaviour {
 		foreach (var _contactPoint in _contactPoints) {
 			slopeNormal += _contactPoint.normal;
 		}
+
+		transform.Find("NormalDebugger").GetComponent<NormalDebugger>().ContactPoints = _contactPoints;
 	}
 
 	void OnTriggerStay2D(Collider2D coll) {
@@ -279,6 +282,12 @@ public class Character : MonoBehaviour {
 		Oxygen = 100.0f;
 
 		gameStarted = false;
+
+		if (NormalDebuggerPrefab != null) {
+			GameObject _normalDebugger = Instantiate (NormalDebuggerPrefab, transform);
+			_normalDebugger.transform.localPosition = Vector3.zero;
+			_normalDebugger.name = "NormalDebugger";
+		}
 	}
 
 	void FixedUpdate () {
