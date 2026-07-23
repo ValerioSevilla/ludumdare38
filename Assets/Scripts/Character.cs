@@ -26,7 +26,7 @@ public class Character : MonoBehaviour {
 
 		public const float MAX_SLOPE_VERTICAL_ANGLE_TO_WALK = 45.0f;
 
-		public const float SLIPPING_WALK_FORCE_FACTOR = 0.25f;
+		public const float SLIPPING_WALK_FORCE_FACTOR = 0.40f;
 	}
 
 	private static int ONTHEFLOOR_BOOL_HASH = Animator.StringToHash ("OnTheFloor");
@@ -82,6 +82,8 @@ public class Character : MonoBehaviour {
 	void OnCollisionStay2D(Collision2D coll) {
 		if (coll.gameObject.tag == "Rock")
 			return;
+
+		slopeNormal = Vector2.zero;
 		
 		ContactPoint2D[] _contactPoints = new ContactPoint2D[coll.contactCount];
 		coll.GetContacts (_contactPoints);
@@ -89,7 +91,11 @@ public class Character : MonoBehaviour {
 			slopeNormal += _contactPoint.normal;
 		}
 
-		transform.Find("NormalDebugger").GetComponent<NormalDebugger>().ContactPoints = _contactPoints;
+		NormalDebugger normalDebugger = transform.Find("NormalDebugger")?.GetComponent<NormalDebugger>();
+		if (normalDebugger != null) {
+			normalDebugger.ContactPoints = _contactPoints;
+			normalDebugger.ComputedNormal = slopeNormal;
+		}
 	}
 
 	void OnTriggerStay2D(Collider2D coll) {
@@ -239,9 +245,9 @@ public class Character : MonoBehaviour {
 		float _controllerDirection = Input.GetAxis ("Horizontal");
 		float _currentDirection = Vector3.Cross (rigidBody.linearVelocity, upDirection).z < 0.0f ? -1.0f : 1.0f;
 
-		float _walkForce;
+		float _walkForceMagnitude;
 		if (_controllerDirection * _currentDirection < 0.0f)	// Opposite direction
-			_walkForce = Constants.WALK_FORCE;
+			_walkForceMagnitude = Constants.WALK_FORCE;
 		else {
 			// Project the current velocity onto the walk direction vector
 			Vector2 _currentWalkVector = projectVector(rigidBody.linearVelocity, _walkDirection);
@@ -250,10 +256,11 @@ public class Character : MonoBehaviour {
 			float _walkForceFactor = (Constants.MAX_LINEAR_VELOCITY - _currentWalkMagnitude) * Constants.MAX_LINEAR_VELOCITY_INVERSE;
 			_walkForceFactor = Mathf.Min (_walkForceFactor, Constants.WALK_FORCE);
 			_walkForceFactor = Mathf.Max (_walkForceFactor, -Constants.WALK_FORCE);
-			_walkForce = Constants.WALK_FORCE * _walkForceFactor;
+			_walkForceMagnitude = Constants.WALK_FORCE * _walkForceFactor;
 		}
 
-		return _walkDirection * rigidBody.mass * _controllerDirection * _walkForce * _slippingWalkForceFactor;
+		Vector2 walkForce = _walkDirection * rigidBody.mass * _controllerDirection * _walkForceMagnitude * _slippingWalkForceFactor;
+		return walkForce;
 	}
 	
 	private void lookLeft () {
@@ -330,9 +337,6 @@ public class Character : MonoBehaviour {
 		rigidBody.AddForce (_walkForce);
 
 		anim.SetBool (WALKING_BOOL_HASH, _walkForce.magnitude >= Constants.NOT_WALKING_THRESHOLD);
-
-		// Reset slope normal
-		slopeNormal = Vector2.zero;
 	}
 	
 	// Update is called once per frame

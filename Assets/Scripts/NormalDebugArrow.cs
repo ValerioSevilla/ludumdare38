@@ -10,6 +10,16 @@ public class NormalDebugArrow : MonoBehaviour {
         }
     }
 
+    private bool highlight;
+    public bool Highlight {
+        get { return highlight; }
+        set {
+            highlight = value;
+            transform.Find("Rectangle").GetComponent<SpriteRenderer>().color = highlight ? Color.green : Color.red;
+            transform.Find("Tip").GetComponent<SpriteRenderer>().color = highlight ? Color.green : Color.red;
+        }
+    }
+
     private float orientation;
     public float Orientation {
         get { return orientation; }
