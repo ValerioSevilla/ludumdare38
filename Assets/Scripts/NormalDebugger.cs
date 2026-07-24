@@ -1,16 +1,10 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class NormalDebugger : MonoBehaviour {
     public GameObject normalDebugArrowPrefab;
 
-    private ContactPoint2D[] contactPoints;
-    public ContactPoint2D[] ContactPoints {
-        get { return contactPoints; }
-        set {
-            contactPoints = value;
-            updateNormalDebugArrows();
-        }
-    }
+    private List<ContactPoint2D> contactPoints;
 
     private Vector2 computedNormal;
     public Vector2 ComputedNormal {
@@ -38,5 +32,19 @@ public class NormalDebugger : MonoBehaviour {
         foreach (var _contactPoint in contactPoints) {
             addNormalDebugArrow(_contactPoint.point, _contactPoint.normal, false);
         }
+    }
+
+    public void ClearContactPoints() {
+        contactPoints = new List<ContactPoint2D>();
+        updateNormalDebugArrows();
+    }
+
+    public void AddContactPoints(ContactPoint2D[] newContactPoints) {
+        contactPoints.AddRange(newContactPoints);
+        updateNormalDebugArrows();
+    }
+
+    private void Awake() {
+        contactPoints = new List<ContactPoint2D>();
     }
 }

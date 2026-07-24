@@ -83,8 +83,6 @@ public class Character : MonoBehaviour {
 		if (coll.gameObject.tag == "Rock")
 			return;
 
-		slopeNormal = Vector2.zero;
-		
 		ContactPoint2D[] _contactPoints = new ContactPoint2D[coll.contactCount];
 		coll.GetContacts (_contactPoints);
 		foreach (var _contactPoint in _contactPoints) {
@@ -93,7 +91,7 @@ public class Character : MonoBehaviour {
 
 		NormalDebugger normalDebugger = transform.Find("NormalDebugger")?.GetComponent<NormalDebugger>();
 		if (normalDebugger != null) {
-			normalDebugger.ContactPoints = _contactPoints;
+			normalDebugger.AddContactPoints(_contactPoints);
 			normalDebugger.ComputedNormal = slopeNormal;
 		}
 	}
@@ -102,6 +100,15 @@ public class Character : MonoBehaviour {
 		if (coll.gameObject.tag == "Ground"
 			|| coll.gameObject.tag == "Rock") {
 			onTheGround = true;
+		}
+	}
+
+	private void resetSlopeNormal() {
+		slopeNormal = Vector2.zero;
+
+		NormalDebugger normalDebugger = transform.Find("NormalDebugger")?.GetComponent<NormalDebugger>();
+		if (normalDebugger != null) {
+			normalDebugger.ClearContactPoints();
 		}
 	}
 
@@ -329,6 +336,8 @@ public class Character : MonoBehaviour {
 
 		if (!gameStarted)
 			return;
+
+		resetSlopeNormal ();
 
 		Vector3 _walkVector = Vector3.Cross (Vector3.back, _direction).normalized;
 		Vector2 _walkDirection = new Vector2 (_walkVector.x, _walkVector.y);
