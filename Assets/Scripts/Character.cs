@@ -16,7 +16,7 @@ public class Character : MonoBehaviour {
 
 		public const float NOT_WALKING_THRESHOLD = 0.01f;
 		public const float LEAVING_FLOOR_WAIT_TIME = 0.025f;
-		public const float NOT_SLIPPING_WAIT_TIME = 0.075f;
+		public const float NOT_SLIPPING_WAIT_TIME = 0.2f;
 
 		public const float O2_PER_SECOND = 1.5f;
 		public const float LIFE_WITH_NO_O2_PER_SECOND = 7.0f;
@@ -24,7 +24,7 @@ public class Character : MonoBehaviour {
 		public const float FALL_DAMAGE_THRESHOLD = 15.0f;
 		public const float FALL_DAMAGE = 25.0f;
 
-		public const float MAX_SLOPE_VERTICAL_ANGLE_TO_WALK = 45.0f;
+		public const float MAX_SLOPE_VERTICAL_ANGLE_TO_WALK = 60.0f;
 
 		public const float SLIPPING_WALK_FORCE_FACTOR = 0.40f;
 	}
