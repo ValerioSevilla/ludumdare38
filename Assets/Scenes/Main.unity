@@ -3360,6 +3360,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 627044fbd3cf946ae855c26106f64591, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NormalDebuggerPrefab: {fileID: 119177748608286362, guid: 5fa750190505f4016a8b530647b7ef64,
+    type: 3}
 --- !u!50 &1807415927
 Rigidbody2D:
   serializedVersion: 5
@@ -3871,6 +3873,7 @@ SceneRoots:
   - {fileID: 1158641736}
   - {fileID: 1807415929}
   - {fileID: 205797708}
+  - {fileID: 308360045}
   - {fileID: 1055037777}
   - {fileID: 858485135}
   - {fileID: 1414682588}
@@ -3895,7 +3898,6 @@ SceneRoots:
   - {fileID: 922268514}
   - {fileID: 769259485}
   - {fileID: 123925112}
-  - {fileID: 308360045}
   - {fileID: 243084185}
   - {fileID: 1434724179}
   - {fileID: 1713896192}
