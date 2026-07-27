@@ -10,7 +10,7 @@ public class Rock : MonoBehaviour {
 		rigidBody = GetComponent<Rigidbody2D> ();
 	}
 
-	void Update () {
+	void FixedUpdate () {
 		Vector3 _direction = transform.position - planet.transform.position;
 		Vector2 _gravity = new Vector2 (_direction.x, _direction.y).normalized * Common.Constants.GRAVITY_MAGNITUDE;
 
