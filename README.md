@@ -8,7 +8,7 @@ Simply clone the repo and open it with [Unity Game Engine](https://unity3d.com).
 
 ### Prerequisites
 
-Unity 5.6 or later is required.
+Unity 6.3 or later is required.
 
 ## Contributing
 
@@ -16,13 +16,13 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/ValerioSevilla/ludumdare38/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/ValerioSevilla/EscapeFromAMoon/tags).
 
 ## Authors
 
-* **Valerio Sevilla** - *Initial work* - [ValerioSevilla](https://github.com/ValerioSevilla)
+* **Valerio Sevilla** - *Initial work and later improvements* - [ValerioSevilla](https://github.com/ValerioSevilla)
 
-See also the list of [contributors](https://github.com/ValerioSevilla/ludumdare38/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/ValerioSevilla/EscapeFromAMoon/contributors) who participated in this project.
 
 ## License
 
@@ -30,4 +30,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Thanks to my wife and children for supporting me during the development!
+* Thanks to my partner and children for supporting me during the development!
